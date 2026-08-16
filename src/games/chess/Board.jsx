@@ -1,8 +1,22 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import { Chessboard } from 'react-chessboard';
 import { Chess as ChessEngine } from 'chess.js';
+import { sfx } from '../../sounds.js';
+
+const pieceCount = fen => (fen.split(' ')[0].match(/[a-zA-Z]/g) || []).length;
 
 export default function ChessBoard({ G, ctx, moves, playerID, matchData }) {
+  const prev = useRef({ fen: G.fen, gameover: false });
+  useEffect(() => {
+    const before = prev.current;
+    if (G.fen !== before.fen) {
+      if (ctx.gameover && !before.gameover) sfx.win();
+      else if (pieceCount(G.fen) < pieceCount(before.fen)) sfx.capture();
+      else sfx.move();
+    }
+    prev.current = { fen: G.fen, gameover: !!ctx.gameover };
+  }, [G.fen, ctx.gameover]);
+
   const engine = new ChessEngine(G.fen);
   const myTurn = playerID != null && ctx.currentPlayer === playerID && !ctx.gameover;
   const orientation = playerID === '1' ? 'black' : 'white';
