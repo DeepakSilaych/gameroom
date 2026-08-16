@@ -16,6 +16,7 @@ const server = Server({
   games: [Chess, Ludo],
   origins: [
     'https://games.deepaksilaych.me',
+    'https://ludo.deepaksilaych.me',
     Origins.LOCALHOST_IN_DEVELOPMENT,
   ],
 });
